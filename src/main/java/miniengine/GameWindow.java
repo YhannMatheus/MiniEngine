@@ -1,41 +1,58 @@
 package miniengine;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import miniengine.bases.Vector2;
 
-// Esta classe herda de Application, mas o usuário final nem precisa saber que ela existe.
 public class GameWindow extends Application {
 
     @Override
     public void start(Stage stage) {
-        // 1. Recupera a instância do Jogo que o usuário criou
         Game game = Game.getInstance();
 
-        if (game == null) {
-            throw new IllegalStateException("O jogo não foi inicializado corretamente via Game.start()");
-        }
+        double finalWidth = game.getWidth();
+        double finalHeight = game.getHeight();
 
-        // 2. Configura a janela usando os dados do objeto Game
-        stage.setTitle(game.getTitle());
-        stage.setResizable(false);
-
-        // 3. Cria o Canvas (Tela de Pintura) com o tamanho configurado
-        Canvas canvas = new Canvas(game.getWidth(), game.getHeight());
+        Canvas canvas = new Canvas(finalWidth, finalHeight);
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        // 4. Monta a cena
-        StackPane root = new StackPane(canvas);
-        root.setStyle("-fx-background-color: black;"); // Fundo padrão preto
-        Scene scene = new Scene(root, game.getWidth(), game.getHeight());
+        gc.setImageSmoothing(false);
 
+        StackPane root = new StackPane(canvas);
+        root.setStyle("-fx-background-color: black;");
+
+        Scene scene = new Scene(root, finalWidth, finalHeight);
+        stage.setTitle(game.getTitle());
         stage.setScene(scene);
+
+        stage.setResizable(true);
         stage.show();
 
-        // Aqui iniciaremos o Game Loop depois
-        System.out.println("Janela iniciada com sucesso: " + game.getTitle());
+        new AnimationTimer() {
+            @Override
+            public void handle(long currentNanoTime) {
+
+                // Limpa a tela
+                gc.setFill(Color.BLACK);
+                gc.fillRect(0, 0, finalWidth, finalHeight);
+
+                gc.save();
+                gc.scale(game.getScale(), game.getScale());
+
+                // Roda o ciclo da Engine
+                game.processNewObjects();    // INIT
+                game.updateAll();            // UPDATE
+                game.renderAll(gc);          // DRAW
+                game.processDeadObjects();   // DISPOSE
+
+                gc.restore();
+            }
+        }.start();
     }
 }

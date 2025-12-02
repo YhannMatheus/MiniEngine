@@ -11,7 +11,10 @@ public class GameObject {
     public boolean isDestroyed = false;
 
 
-    // --- MÉTODOS DO PROGRAMADOR (User Land) ---
+    // --- MÉTODOS DO PROGRAMADOR ---
+
+    // Chamado 1x antes de nascer
+    public void born(){}
 
     // Chamado 1x ao nascer
     public void initialize() {}
@@ -21,6 +24,31 @@ public class GameObject {
 
     // Chamado ao morrer/sair (Sugestão de nome novo)
     public void dispose() {}
+
+
+
+    // --- GERENCIAMENTO DE COMPONENTES ---
+
+    public void addComponent(GameComponent component){
+        component.gameObject = this;
+
+        this.components.add(component);
+        component.start(); // Já inicia o componente assim que adiciona
+    }
+
+    public void removeComponent(GameComponent component){
+        component.gameObject = null;
+        this.components.remove(component);
+    }
+
+    public <T extends GameComponent> T getComponent(Class<T> componentClass) {
+        for (GameComponent c : components) {
+            if (componentClass.isAssignableFrom(c.getClass())) {
+                return componentClass.cast(c);
+            }
+        }
+        return null;
+    }
 
     // --- MÉTODOS DA ENGINE (Engine Land) ---
     public final void runUpdate() {
@@ -42,34 +70,5 @@ public class GameObject {
         for (GameComponent c : components) {
             c.draw(gc);
         }
-    }
-
-    // --- GERENCIAMENTO DE COMPONENTES ---
-
-    public void addComponent(GameComponent component){
-        // CRÍTICO: Avisar o componente que ele pertence a este objeto
-        component.gameObject = this;
-
-        this.components.add(component);
-        component.start(); // Já inicia o componente assim que adiciona
-    }
-
-    public void removeComponent(GameComponent component){
-        component.gameObject = null;
-        this.components.remove(component);
-    }
-
-    // CRÍTICO: Método para os componentes conversarem entre si
-    public <T extends GameComponent> T getComponent(Class<T> componentClass) {
-        for (GameComponent c : components) {
-            if (componentClass.isAssignableFrom(c.getClass())) {
-                return componentClass.cast(c);
-            }
-        }
-        return null;
-    }
-
-    public List<GameComponent> getComponents(){
-        return this.components;
     }
 }
