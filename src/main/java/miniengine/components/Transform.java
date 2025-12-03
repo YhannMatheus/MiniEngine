@@ -9,6 +9,11 @@ public class Transform extends GameComponent {
     public double rotation;
 
     //------ constructors -------
+    public Transform(){
+        this.position = Vector2.zero();
+        this.scale = Vector2.one();
+        this.rotation = 0;
+    }
     public Transform(Vector2 position,Vector2 scale,double rotation){
         this.position = position;
         this.scale = scale;

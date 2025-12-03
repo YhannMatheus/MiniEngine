@@ -1,39 +1,51 @@
 package miniengine;
 import javafx.scene.canvas.GraphicsContext;
+import miniengine.components.Transform;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameObject {
 
+    public static int instances;
     public String name;
-    private final List<GameComponent> components = new ArrayList<>();
     public boolean isActivated = true;
     public boolean isDestroyed = false;
 
+    private final List<GameComponent> components = new ArrayList<>();
+    public Transform transform;
+
+    public GameObject() {
+        instances++;
+        this.name = "GameObject_"+instances;
+        this.transform = new Transform();
+
+        addComponent(this.transform);
+
+        awake();
+    }
 
     // --- MÉTODOS DO PROGRAMADOR ---
 
-    // Chamado 1x antes de nascer
-    public void born(){}
+    public void awake(){}
 
-    // Chamado 1x ao nascer
     public void initialize() {}
 
-    // Chamado a cada frame (Lógica customizada do objeto)
     public void update() {}
 
-    // Chamado ao morrer/sair (Sugestão de nome novo)
     public void dispose() {}
-
 
 
     // --- GERENCIAMENTO DE COMPONENTES ---
 
     public void addComponent(GameComponent component){
-        component.gameObject = this;
+        if(component instanceof Transform && component != this.transform){
+            System.err.println(String.format("Aviso [Objeto %s ] : Já contem um componente Transform", name));
+            return;
+        }
 
-        this.components.add(component);
-        component.start(); // Já inicia o componente assim que adiciona
+        component.gameObject = this;
+        components.add(component);
+        component.start();
     }
 
     public void removeComponent(GameComponent component){
@@ -50,23 +62,19 @@ public class GameObject {
         return null;
     }
 
-    // --- MÉTODOS DA ENGINE (Engine Land) ---
+    // --- MÉTODOS DA ENGINE ---
     public final void runUpdate() {
         if (!isActivated) return;
-
-        // 1. Roda a lógica dos componentes (Scripts, Física, etc)
         for (GameComponent c : components) {
             c.update();
         }
 
-        // 2. Roda a lógica do programador
         this.update();
     }
 
     public final void runDraw(GraphicsContext gc) {
         if (!isActivated) return;
 
-        // Desenha todos os componentes visuais
         for (GameComponent c : components) {
             c.draw(gc);
         }
