@@ -1,6 +1,5 @@
 package miniengine.components;
 
-import javafx.scene.paint.Color;
 import miniengine.Game;
 import miniengine.GameComponent;
 import javafx.scene.image.Image;
@@ -27,12 +26,12 @@ public class SpriteRender extends GameComponent {
         try {
             InputStream stream = getClass().getResourceAsStream(path);
             if(stream == null){
-                System.err.println("ERRO [" + gameObject.name + "] - " + path + " nao encontrado");
+                System.err.println("ERRO [Sprite] - Imagem " + path + " nao encontrada");
             } else {
                 this.sprite = new Image(stream);
             }
         }catch (Exception e){
-            System.err.println("ERRO [" + gameObject.name + "] - " + e.getMessage());
+            System.err.println("ERRO [Sprite] - " + e.getMessage());
         }
     }
 

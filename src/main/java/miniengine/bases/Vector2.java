@@ -36,4 +36,10 @@ public class Vector2 {
             this.y = this.y / length;
         }
     }
+
+    public double distance(Vector2 other){
+        double dx = this.x - other.x;
+        double dy = this.y - other.y;
+        return Math.sqrt(dx*dx + dy*dy);
+    }
 }

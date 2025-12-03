@@ -3,6 +3,7 @@ package miniengine;
 import javafx.application.Application;
 import javafx.scene.canvas.GraphicsContext;
 import miniengine.components.Camera;
+import miniengine.components.SoundListener;
 
 public class Game {
 
@@ -15,6 +16,7 @@ public class Game {
 
     private World currentWorld;
     private Camera mainCamera;
+    private SoundListener soundListener;
 
     public Game(String title, int width, int height, double scale) {
         this.title = title;
@@ -65,17 +67,17 @@ public class Game {
         if (currentWorld != null) currentWorld.renderWorld(gc);
     }
 
-    public void setMainCamera(Camera camera) {
-        this.mainCamera = camera;
-    }
+    // ____ Seters _____
+    public void setMainCamera(Camera camera) {this.mainCamera = camera;}
+    public void setListener(SoundListener soundListener) {this.soundListener = soundListener;}
 
-    public Camera getMainCamera() {
-        return this.mainCamera;
-    }
-
+    // ____ Geters _____
+    public Camera getMainCamera() {return this.mainCamera;}
     public static Game getInstance() { return instance; }
     public String getTitle() { return title; }
     public int getWidth() { return width; }
     public int getHeight() { return height; }
     public double getScale() { return scale; }
+    public SoundListener getListener() { return soundListener; }
+
 }

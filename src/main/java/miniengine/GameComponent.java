@@ -39,4 +39,6 @@ public abstract class GameComponent {
     public void destroy() {
         // Opcional
     }
+
+    public void onCollision(GameObject other) {}
 }

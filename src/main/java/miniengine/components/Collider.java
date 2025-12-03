@@ -10,6 +10,7 @@ public class Collider extends GameComponent {
     public Vector2 size;
     public Vector2 offset;
 
+    public boolean isTrigger = false;
     private boolean isDebug = true;
     public boolean inColliding = false;
 
@@ -25,7 +26,7 @@ public class Collider extends GameComponent {
 
 
     public boolean overlaps(Collider other){
-        Transform tA = this.gameObject.getComponent(Transform.class);
+        Transform tA = this.gameObject.transform;
 
         if(tA == null) return false;
 
@@ -36,7 +37,7 @@ public class Collider extends GameComponent {
         double aBottom = tA.position.y + this.offset.y + (this.size.y/2);
 
 
-        Transform tB = other.gameObject.getComponent(Transform.class);
+        Transform tB = other.gameObject.transform;
         // Arestas de B
         double bLeft = tB.position.x + other.offset.x - (other.size.x/2);
         double bRight = tB.position.x + other.offset.x + (other.size.x/2);
@@ -57,15 +58,13 @@ public class Collider extends GameComponent {
     public void draw(GraphicsContext gc){
         if(!isDebug) return;
 
-        Transform t = gameObject.getComponent(Transform.class);
-        if(t == null) return;
+        Transform t = gameObject.transform;
 
-        gc.setStroke(Color.LIMEGREEN);
+        gc.setStroke(isTrigger ? Color.YELLOW : Color.LIMEGREEN);
+
         gc.setLineWidth(1);
-
         double drawX = t.position.x + offset.x - (size.x/2);
         double drawY = t.position.y + offset.y - (size.y/2);
-
         gc.strokeRect(drawX,drawY,size.x,size.y);
     }
 }

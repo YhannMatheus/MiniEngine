@@ -6,7 +6,7 @@ import miniengine.bases.*;
 
 public class Camera extends GameComponent {
     public static int instances;
-    private String name;
+    private final String name;
     public Vector2 viewportSize;
     public double zoom = 1.0;
 
@@ -21,7 +21,7 @@ public class Camera extends GameComponent {
         Game.getInstance().setMainCamera(this);
     }
 
-    public void swithGameObject(GameObject gameObject){
+    public void switGameObject(GameObject gameObject){
         this.gameObject = gameObject;
     }
 

@@ -1,97 +1,118 @@
 package miniengine;
 
 import javafx.scene.canvas.GraphicsContext;
+import miniengine.bases.Vector2;
 import miniengine.components.Collider;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class World {
+
     protected List<GameObject> activeObjects = new ArrayList<>();
-    private List<GameObject> objectsToAdd = new ArrayList<>();
-    private List<GameObject> objectsToRemove = new ArrayList<>();
+    private final List<GameObject> objectsToAdd = new ArrayList<>();
+    private final int CELL_SIZE = 150;
 
-    // --- CICLO DE VIDA DO MUNDO ---
-
-    /**
-     * Chamado automaticamente quando o Game carrega este mundo.
-     * É aqui que você cria o Player, o Mapa, os Inimigos, etc.
-     */
-    public abstract void onEnter();
-
-    /**
-     * Chamado quando trocamos para outro mundo.
-     * Bom para parar músicas ou salvar dados.
-     */
-    public void onExit() {
-        // Opcional
-    }
-
-    // --- GERENCIAMENTO DE OBJETOS ---
+    public void onEnter() {}
+    public void onExit() {}
 
     public void addObject(GameObject obj) {
         objectsToAdd.add(obj);
     }
 
-    public void removeObject(GameObject obj) {
-        objectsToRemove.add(obj);
-    }
-
-    // --- MÉTODOS INTERNOS (Chamados pelo Game Loop) ---
-
     public void processNewObjects() {
-        for (GameObject obj : objectsToAdd) {
-            obj.initialize();
-            activeObjects.add(obj);
+        if (!objectsToAdd.isEmpty()) {
+            for (GameObject obj : objectsToAdd) {
+                obj.initialize();
+                activeObjects.add(obj);
+            }
+            objectsToAdd.clear();
         }
-        objectsToAdd.clear();
     }
 
     public void processDeadObjects() {
-        for (GameObject obj : objectsToRemove) {
-            obj.dispose();
-            activeObjects.remove(obj);
-        }
-        objectsToRemove.clear();
+        activeObjects.removeIf(obj -> {
+            if (obj.isDestroyed) {
+                obj.dispose();
+                return true;
+            }
+            return false;
+        });
     }
 
     public void updateWorld() {
-        for (GameObject obj : activeObjects) {
-            obj.runUpdate();
+        for (int i = 0; i < activeObjects.size(); i++) {
+            activeObjects.get(i).runUpdate();
         }
-
         resolveCollisions();
     }
 
     public void renderWorld(GraphicsContext gc) {
-        for (GameObject obj : activeObjects) {
-            obj.runDraw(gc);
+        for (int i = 0; i < activeObjects.size(); i++) {
+            activeObjects.get(i).runDraw(gc);
         }
     }
 
-    public void resolveCollisions(){
+    private void resolveCollisions() {
         for (GameObject obj : activeObjects) {
             Collider col = obj.getComponent(Collider.class);
-
-            if(col != null){
-                col.inColliding = false;
-            }
+            if (col != null) col.inColliding = false;
         }
-        for( int i = 0; i < activeObjects.size(); i++){
-            GameObject objA = activeObjects.get(i);
+
+        Map<String, List<GameObject>> grid = new HashMap<>();
+
+        for (GameObject obj : activeObjects) {
+            Collider col = obj.getComponent(Collider.class);
+            if (col == null) continue;
+
+            int cellX = (int) (obj.transform.position.x / CELL_SIZE);
+            int cellY = (int) (obj.transform.position.y / CELL_SIZE);
+            String key = cellX + "," + cellY;
+
+            grid.computeIfAbsent(key, k -> new ArrayList<>()).add(obj);
+        }
+
+        for (String key : grid.keySet()) {
+            List<GameObject> objectsInCell = grid.get(key);
+
+            String[] parts = key.split(",");
+            int cx = Integer.parseInt(parts[0]);
+            int cy = Integer.parseInt(parts[1]);
+
+            checkCollisionBetweenLists(objectsInCell, objectsInCell);
+            checkCollisionBetweenLists(objectsInCell, grid.get((cx + 1) + "," + cy));
+            checkCollisionBetweenLists(objectsInCell, grid.get(cx + "," + (cy + 1)));
+            checkCollisionBetweenLists(objectsInCell, grid.get((cx + 1) + "," + (cy + 1)));
+            checkCollisionBetweenLists(objectsInCell, grid.get((cx - 1) + "," + (cy + 1)));
+        }
+    }
+
+    private void checkCollisionBetweenLists(List<GameObject> listA, List<GameObject> listB) {
+        if (listA == null || listB == null || listA.isEmpty() || listB.isEmpty()) return;
+
+        for (GameObject objA : listA) {
             Collider colA = objA.getComponent(Collider.class);
 
-            if(colA == null) continue;
+            for (GameObject objB : listB) {
+                if (objA == objB) continue;
 
-            for( int j = i +1; j < activeObjects.size(); j++){
-                GameObject objB = activeObjects.get(j);
                 Collider colB = objB.getComponent(Collider.class);
+                if (colB == null) continue;
 
-                if(colB == null) continue;
+                Vector2 push = Physics.checkCollision(colA, colB);
 
-                if (colA.overlaps(colB)) {
+                if (push.x != 0 || push.y != 0) {
                     colA.inColliding = true;
                     colB.inColliding = true;
+
+                    objA.runOnCollision(objB);
+                    objB.runOnCollision(objA);
+
+                    if (!colA.isTrigger && !colB.isTrigger) {
+                        objA.transform.translate(new Vector2(push.x, push.y));
+                    }
                 }
             }
         }

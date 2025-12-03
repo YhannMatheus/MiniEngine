@@ -34,7 +34,6 @@ public class GameObject {
 
     public void dispose() {}
 
-
     // --- GERENCIAMENTO DE COMPONENTES ---
 
     public void addComponent(GameComponent component){
@@ -60,6 +59,14 @@ public class GameObject {
             }
         }
         return null;
+    }
+
+    public final void runOnCollision(GameObject other) {
+        if (!isActivated) return;
+
+        for (GameComponent c : components) {
+            c.onCollision(other);
+        }
     }
 
     // --- MÉTODOS DA ENGINE ---
