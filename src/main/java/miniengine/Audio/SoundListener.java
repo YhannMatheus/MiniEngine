@@ -1,7 +1,7 @@
-package miniengine.components;
+package miniengine.Audio;
 
-import miniengine.Game;
-import miniengine.GameComponent;
+import miniengine.Core.Game;
+import miniengine.Structure.GameComponent;
 
 public class SoundListener extends GameComponent {
     @Override

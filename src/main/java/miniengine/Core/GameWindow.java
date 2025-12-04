@@ -1,4 +1,4 @@
-package miniengine;
+package miniengine.Core;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -8,8 +8,11 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import miniengine.components.Camera;
-import miniengine.components.Transform;
+
+import miniengine.Input.Input;
+import miniengine.Graphics.Camera;
+import miniengine.Graphics.Painter;
+import miniengine.Structure.Transform;
 
 public class GameWindow extends Application {
 
@@ -59,11 +62,15 @@ public class GameWindow extends Application {
     }
 
     private void startGameLoop(GraphicsContext gc) {
+        Painter painter = new Painter(gc);
+
         new AnimationTimer() {
             @Override
-            public void handle(long currentNanoTime) {
+            public void handle(long now) {
                 gc.setFill(Color.BLACK);
                 gc.fillRect(0, 0, width, height);
+
+                Time.update(now);
 
                 gc.save();
 
@@ -82,7 +89,7 @@ public class GameWindow extends Application {
 
                 game.processNewObjects();
                 game.updateAll();
-                game.renderAll(gc);
+                game.renderAll(painter);
                 game.processDeadObjects();
 
                 gc.restore();

@@ -1,7 +1,10 @@
-package miniengine.components;
+package miniengine.Graphics;
 
-import miniengine.*;
-import miniengine.bases.*;
+import miniengine.Core.Game;
+import miniengine.Math.*;
+import miniengine.Structure.GameComponent;
+import miniengine.Structure.GameObject;
+import miniengine.Structure.Transform;
 
 
 public class Camera extends GameComponent {

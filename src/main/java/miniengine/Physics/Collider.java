@@ -1,9 +1,12 @@
-package miniengine.components;
+package miniengine.Physics;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import miniengine.GameComponent;
-import miniengine.bases.Vector2;
+import miniengine.Graphics.GameColor;
+import miniengine.Graphics.Painter;
+import miniengine.Structure.GameComponent;
+import miniengine.Math.Vector2;
+import miniengine.Structure.Transform;
 
 public class Collider extends GameComponent {
 
@@ -55,16 +58,16 @@ public class Collider extends GameComponent {
     }
 
     @Override
-    public void draw(GraphicsContext gc){
+    public void draw(Painter p){
         if(!isDebug) return;
 
         Transform t = gameObject.transform;
 
-        gc.setStroke(isTrigger ? Color.YELLOW : Color.LIMEGREEN);
+        p.setColor(isTrigger ? GameColor.YELLOW : GameColor.GREEN);
 
-        gc.setLineWidth(1);
+        p.setLineWidth(1);
         double drawX = t.position.x + offset.x - (size.x/2);
         double drawY = t.position.y + offset.y - (size.y/2);
-        gc.strokeRect(drawX,drawY,size.x,size.y);
+        p.drawRect(drawX,drawY,size.x,size.y);
     }
 }

@@ -1,8 +1,8 @@
 package Game.Worlds;
 
-import miniengine.World;
+import miniengine.Core.World;
 
-public class Menu extends World {
+public class Scene extends World {
 
     @Override
     public void onEnter() {

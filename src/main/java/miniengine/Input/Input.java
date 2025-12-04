@@ -1,8 +1,9 @@
-package miniengine;
+package miniengine.Input;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import miniengine.bases.Vector2;
+import miniengine.Core.Game;
+import miniengine.Math.Vector2;
 
 import java.util.HashSet;
 import java.util.Set;

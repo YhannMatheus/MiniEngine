@@ -1,20 +1,47 @@
-package miniengine;
+package miniengine.Core;
 
-import javafx.scene.canvas.GraphicsContext;
-import miniengine.bases.Vector2;
-import miniengine.components.Collider;
+import miniengine.Graphics.GameColor;
+import miniengine.Graphics.Painter;
+import miniengine.Structure.GameObject;
+import miniengine.Math.Vector2;
+import miniengine.Physics.Physics;
+import miniengine.Physics.Collider;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public abstract class World {
+public class World {
+
+    public String name;
+    private int index;
+    public Vector2 size;
+    public Vector2 minPoints;
+    public Vector2 maxPoints;
+
+    private static int instances;
+    public boolean showBounds = false;
 
     protected List<GameObject> activeObjects = new ArrayList<>();
     private final List<GameObject> objectsToAdd = new ArrayList<>();
     private final int CELL_SIZE = 150;
 
+    public World(Vector2 size){
+        instances++;
+        index = instances;
+        this.name = "World_"+index;
+        this.size = size;
+        this.minPoints = new Vector2(0, 0);
+        this.maxPoints = new Vector2(0, 0);
+        calculateBounds();
+
+    }
+    private void calculateBounds(){
+        minPoints.y = -(size.y/2);
+        maxPoints.y = +(size.y/2);
+        minPoints.x = -(size.x/2);
+        maxPoints.x = +(size.x/2);
+    }
+
+    // ____ Funções Livres ____
     public void onEnter() {}
     public void onExit() {}
 
@@ -22,6 +49,7 @@ public abstract class World {
         objectsToAdd.add(obj);
     }
 
+    //__ Funções nativas da Engine ___
     public void processNewObjects() {
         if (!objectsToAdd.isEmpty()) {
             for (GameObject obj : objectsToAdd) {
@@ -49,10 +77,31 @@ public abstract class World {
         resolveCollisions();
     }
 
-    public void renderWorld(GraphicsContext gc) {
+    public void renderWorld(Painter painter) {
         for (int i = 0; i < activeObjects.size(); i++) {
-            activeObjects.get(i).runDraw(gc);
+            activeObjects.get(i).runDraw(painter);
         }
+    }
+    private void drawWorldBounds(Painter p) {
+        p.save();
+        p.setColor(GameColor.BLUE);
+        p.setLineWidth(5);
+
+        p.drawRect(minPoints.x, minPoints.y, size.x, size.y);
+
+        p.setLineWidth(2);
+        p.drawRect(-10, -10, 20, 20);
+        p.restore();
+    }
+
+    public List<GameObject> getObjects() {
+        return activeObjects;
+    }
+
+    public Vector2 clampPosition(Vector2 pos) {
+        double clampedX = Math.max(minPoints.x, Math.min(maxPoints.x, pos.x));
+        double clampedY = Math.max(minPoints.y, Math.min(maxPoints.y, pos.y));
+        return new Vector2(clampedX, clampedY);
     }
 
     private void resolveCollisions() {

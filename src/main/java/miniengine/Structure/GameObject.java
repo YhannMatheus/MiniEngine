@@ -1,12 +1,14 @@
-package miniengine;
+package miniengine.Structure;
+
 import javafx.scene.canvas.GraphicsContext;
-import miniengine.components.Transform;
+import miniengine.Graphics.Painter;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameObject {
 
-    public static int instances;
+    public static int instances = 0;
     public String name;
     public boolean isActivated = true;
     public boolean isDestroyed = false;
@@ -16,17 +18,18 @@ public class GameObject {
 
     public GameObject() {
         instances++;
-        this.name = "GameObject_"+instances;
+        this.name = "GameObject_" + instances;
         this.transform = new Transform();
-
-        addComponent(this.transform);
-
         awake();
     }
 
-    // --- MÉTODOS DO PROGRAMADOR ---
+    public GameObject(String name) {
+        this.name = name;
+        this.transform = new Transform();
+        awake();
+    }
 
-    public void awake(){}
+    public void awake() {}
 
     public void initialize() {}
 
@@ -34,20 +37,13 @@ public class GameObject {
 
     public void dispose() {}
 
-    // --- GERENCIAMENTO DE COMPONENTES ---
-
-    public void addComponent(GameComponent component){
-        if(component instanceof Transform && component != this.transform){
-            System.err.println(String.format("Aviso [Objeto %s ] : Já contem um componente Transform", name));
-            return;
-        }
-
+    public void addComponent(GameComponent component) {
         component.gameObject = this;
         components.add(component);
         component.start();
     }
 
-    public void removeComponent(GameComponent component){
+    public void removeComponent(GameComponent component) {
         component.gameObject = null;
         this.components.remove(component);
     }
@@ -63,27 +59,26 @@ public class GameObject {
 
     public final void runOnCollision(GameObject other) {
         if (!isActivated) return;
-
         for (GameComponent c : components) {
             c.onCollision(other);
         }
     }
 
-    // --- MÉTODOS DA ENGINE ---
     public final void runUpdate() {
         if (!isActivated) return;
-        for (GameComponent c : components) {
-            c.update();
+
+        for (int i = 0; i < components.size(); i++) {
+            components.get(i).update();
         }
 
         this.update();
     }
 
-    public final void runDraw(GraphicsContext gc) {
+    public final void runDraw(Painter p) {
         if (!isActivated) return;
 
-        for (GameComponent c : components) {
-            c.draw(gc);
+        for (int i = 0; i < components.size(); i++) {
+            components.get(i).draw(p);
         }
     }
 }

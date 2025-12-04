@@ -1,4 +1,4 @@
-package miniengine.bases;
+package miniengine.Math;
 
 public class Vector2 {
 

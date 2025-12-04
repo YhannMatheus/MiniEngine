@@ -1,8 +1,6 @@
 package Game.GameObjects;
 
-import miniengine.GameObject;
-import miniengine.bases.Vector2;
-import miniengine.components.SpriteRender;
+import miniengine.Structure.GameObject;
 
 public class Example extends GameObject {
 

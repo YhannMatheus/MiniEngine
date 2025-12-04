@@ -1,8 +1,7 @@
-package miniengine;
+package miniengine.Physics;
 
-import miniengine.bases.Vector2;
-import miniengine.components.*;
-import miniengine.components.Transform;
+import miniengine.Math.Vector2;
+import miniengine.Structure.Transform;
 
 public class Physics {
 

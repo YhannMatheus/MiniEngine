@@ -1,13 +1,13 @@
 package Game;
 
-import miniengine.Game;
+import Game.Worlds.Scene;
+import miniengine.Core.Game;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Iniciando a engine....");
+        Game myGame = new Game("Demo", 1920,1080, 2);
 
-        Game myGame = new Game("Teste", 1920,1080, 2);
-
+        Game.getInstance().serInitialWorld( new Scene());
         myGame.start();
     }
 }

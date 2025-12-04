@@ -1,9 +1,10 @@
-package miniengine;
+package miniengine.Core;
 
 import javafx.application.Application;
-import javafx.scene.canvas.GraphicsContext;
-import miniengine.components.Camera;
-import miniengine.components.SoundListener;
+import miniengine.Graphics.Painter;
+import miniengine.Structure.GameObject;
+import miniengine.Graphics.Camera;
+import miniengine.Audio.SoundListener;
 
 public class Game {
 
@@ -63,21 +64,21 @@ public class Game {
         if (currentWorld != null) currentWorld.updateWorld();
     }
 
-    public void renderAll(GraphicsContext gc) {
-        if (currentWorld != null) currentWorld.renderWorld(gc);
+    public void renderAll(Painter painter) {
+        if (currentWorld != null) currentWorld.renderWorld(painter);
     }
 
-    // ____ Seters _____
-    public void setMainCamera(Camera camera) {this.mainCamera = camera;}
-    public void setListener(SoundListener soundListener) {this.soundListener = soundListener;}
+    // ____ Geters ____
+    public void setMainCamera(Camera camera) { this.mainCamera = camera; }
+    public void setListener(SoundListener soundListener) { this.soundListener = soundListener; }
+    public void setInitialWorld(World initialWorld) { this.currentWorld = initialWorld; }
 
-    // ____ Geters _____
-    public Camera getMainCamera() {return this.mainCamera;}
+    // ____ Setters ____
+    public Camera getMainCamera() { return this.mainCamera; }
     public static Game getInstance() { return instance; }
     public String getTitle() { return title; }
     public int getWidth() { return width; }
     public int getHeight() { return height; }
     public double getScale() { return scale; }
     public SoundListener getListener() { return soundListener; }
-
 }

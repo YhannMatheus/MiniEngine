@@ -1,8 +1,9 @@
-package miniengine.components;
+package miniengine.Audio;
 
 import javafx.scene.media.AudioClip;
-import miniengine.Game;
-import miniengine.GameComponent;
+import miniengine.Core.Game;
+import miniengine.Structure.GameComponent;
+import miniengine.Structure.Transform;
 
 import java.net.URL;
 
