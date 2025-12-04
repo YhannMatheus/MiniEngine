@@ -1,5 +1,6 @@
 package miniengine.Components;
 
+import miniengine.Core.AssetManager;
 import miniengine.Core.Game;
 import miniengine.Graphics.Painter;
 import miniengine.Structure.GameComponent;
@@ -28,16 +29,7 @@ public class SpriteRenderer extends GameComponent {
 
         String path = fileName.startsWith("/") ? fileName : "/images/" + fileName;
 
-        try {
-            InputStream stream = getClass().getResourceAsStream(path);
-            if (stream == null) {
-                System.err.println("ERRO [Sprite] - Imagem " + path + " nao encontrada");
-            } else {
-                this.sprite = new Image(stream);
-            }
-        } catch (Exception e) {
-            System.err.println("ERRO [Sprite] - " + e.getMessage());
-        }
+        this.sprite = AssetManager.getSprite(fileName);
     }
 
     @Override

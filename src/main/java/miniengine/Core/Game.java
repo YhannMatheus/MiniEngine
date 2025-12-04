@@ -4,7 +4,7 @@ import javafx.application.Application;
 import miniengine.Graphics.Painter;
 import miniengine.Structure.GameObject;
 import miniengine.Components.Camera;
-import miniengine.Audio.SoundListener;
+import miniengine.Components.Audio.SoundListener;
 
 public class Game {
 

@@ -2,6 +2,7 @@ package miniengine.Structure;
 
 
 import miniengine.Graphics.Painter;
+import miniengine.Math.Vector2;
 
 public abstract class GameComponent {
 
@@ -19,9 +20,13 @@ public abstract class GameComponent {
 
     /**
      * Chamado a cada frame (Desenho).
-     * @param p O Pintor da engine (Wrapper do GraphicsContext).
      */
     public void draw(Painter p) {}
+
+    /**
+     * Chamado quando o objeto é destruído (limpeza).
+     */
+    public void destroy() {}
 
     /**
      * Chamado quando o Physics detecta colisão.
@@ -29,7 +34,8 @@ public abstract class GameComponent {
     public void onCollision(GameObject other) {}
 
     /**
-     * Chamado quando o objeto é destruído (limpeza).
+     * Avisa o componente que o objeto foi empurrado pela física
      */
-    public void destroy() {}
+    public void onPhysicsResolved(Vector2 correction) {}
+
 }

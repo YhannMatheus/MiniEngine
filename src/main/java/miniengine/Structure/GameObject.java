@@ -2,6 +2,7 @@ package miniengine.Structure;
 
 import javafx.scene.canvas.GraphicsContext;
 import miniengine.Graphics.Painter;
+import miniengine.Math.Vector2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,9 @@ public class GameObject {
 
     public void dispose() {}
 
+    public void onPhysicsResolved(Vector2 correction) {}
+
+    // ___ Administração de componentes ____
     public void addComponent(GameComponent component) {
         component.gameObject = this;
         components.add(component);
@@ -61,6 +65,7 @@ public class GameObject {
         return null;
     }
 
+    // ____ Fisica ____
     public final void runOnCollision(GameObject other) {
         if (!isActivated) return;
         for (GameComponent c : components) {
@@ -68,6 +73,13 @@ public class GameObject {
         }
     }
 
+    public void runPhysicsResolved(Vector2 correction) {
+        for (int i = 0; i < components.size(); i++) {
+            components.get(i).onPhysicsResolved(correction);
+        }
+    }
+
+    // ___ Funções Internas dda engine _____
     public final void runUpdate() {
         if (!isActivated) return;
 

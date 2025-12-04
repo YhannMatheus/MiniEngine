@@ -5,6 +5,7 @@ import miniengine.Math.Vector2;
 import miniengine.Structure.Transform;
 
 public class Physics {
+    public static Vector2 gravity = new Vector2(0, 980);
 
     public static Vector2 checkCollision(Collider colA, Collider colB) {
         Transform tA = colA.gameObject.transform;

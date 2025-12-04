@@ -1,4 +1,4 @@
-package miniengine.Audio;
+package miniengine.Components.Audio;
 
 import miniengine.Core.Game;
 import miniengine.Structure.GameComponent;

@@ -26,21 +26,16 @@ public class Animator extends GameComponent {
     public boolean flipY = false;
     public double alpha = 1.0;
 
-    private int columsInSheet;
+    private int columnsInSheet;
 
     public Animator (String fileName, Vector2 frameSize) {
         this.frameSize = frameSize;
 
         String path = fileName.startsWith("/") ? fileName : "/images/" + fileName;
 
-        try {
-            InputStream stream = getClass().getResourceAsStream(path);
-            if(stream != null){
-                this.spriteSheet = new Image(stream);
-                this.columsInSheet = (int)(spriteSheet.getWidth()/frameSize.x);
-            }
-        }catch (Exception e){
-            System.err.println("Error [Animator] - " + e.getMessage());
+        this.spriteSheet = AssetManager.getSprite(fileName);
+        if (this.spriteSheet != null) {
+            this.columnsInSheet = (int) (spriteSheet.getWidth() / frameSize.x);
         }
     }
 
@@ -91,8 +86,8 @@ public class Animator extends GameComponent {
 
         if(cam != null && !cam.isVisible(t.position, frameSize)) return;
 
-        int col = currentFrameIndex % columsInSheet;
-        int row = currentFrameIndex / columsInSheet;
+        int col = currentFrameIndex % columnsInSheet;
+        int row = currentFrameIndex / columnsInSheet;
 
         double srcX = col * frameSize.x;
         double srcY = row * frameSize.y;

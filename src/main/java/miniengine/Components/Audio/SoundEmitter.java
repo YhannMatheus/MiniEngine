@@ -1,4 +1,4 @@
-package miniengine.Audio;
+package miniengine.Components.Audio;
 
 import javafx.scene.media.AudioClip;
 import miniengine.Core.Game;
