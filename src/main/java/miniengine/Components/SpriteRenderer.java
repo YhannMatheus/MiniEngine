@@ -1,6 +1,7 @@
-package miniengine.Graphics;
+package miniengine.Components;
 
 import miniengine.Core.Game;
+import miniengine.Graphics.Painter;
 import miniengine.Structure.GameComponent;
 import javafx.scene.image.Image;
 import miniengine.Math.Vector2;

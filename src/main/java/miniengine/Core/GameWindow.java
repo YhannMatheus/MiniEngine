@@ -10,7 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import miniengine.Input.Input;
-import miniengine.Graphics.Camera;
+import miniengine.Components.Camera;
 import miniengine.Graphics.Painter;
 import miniengine.Structure.Transform;
 

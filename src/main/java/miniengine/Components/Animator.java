@@ -1,7 +1,9 @@
-package miniengine.Graphics;
+package miniengine.Components;
 
 import javafx.scene.image.Image;
 import miniengine.Core.*;
+import miniengine.Graphics.AnimationClip;
+import miniengine.Graphics.Painter;
 import miniengine.Structure.*;
 import miniengine.Math.*;
 
@@ -11,7 +13,7 @@ import java.util.Map;
 
 public class Animator extends GameComponent {
     private Image spriteSheet;
-    private Map<String,AnimationClip> clips = new HashMap<>();
+    private Map<String, AnimationClip> clips = new HashMap<>();
     private AnimationClip currentClip;
 
     public Vector2 frameSize;

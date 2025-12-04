@@ -1,13 +1,16 @@
 package miniengine.Graphics;
 
-
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.Stop;
 
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Painter {
     private final GraphicsContext gc;
@@ -32,7 +35,7 @@ public class Painter {
         gc.setGlobalAlpha(alpha);
     }
 
-    // --- FORMAS ---
+    // --- Preenchimentos ---
 
     public void fillRect(double x, double y, double width, double height) {
         gc.fillRect(x, y, width, height);
@@ -44,6 +47,22 @@ public class Painter {
 
     public void fillOval(double x, double y, double width, double height) {
         gc.fillOval(x, y, width, height);
+    }
+
+    public void fillGradientRect(double x, double y, double w, double h, GameColor colorTop, GameColor colorBottom){
+        javafx.scene.paint.Color fxTop = javafx.scene.paint.Color.rgb((int)colorTop.r, (int)colorTop.g, (int)colorTop.b, colorTop.a / 255.0);
+        javafx.scene.paint.Color fxBot = javafx.scene.paint.Color.rgb((int)colorBottom.r, (int)colorBottom.g, (int)colorBottom.b, colorBottom.a / 255.0);
+
+        LinearGradient gradient = new LinearGradient(
+                0, 0, 0, 1,
+                true, // Proporcional ao tamanho do retângulo
+                CycleMethod.NO_CYCLE,
+                new Stop(0, fxTop),
+                new Stop(1, fxBot)
+        );
+
+        gc.setFill(gradient);
+        gc.fillRect(x, y, w, h);
     }
 
     // --- IMAGENS ---

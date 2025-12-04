@@ -3,7 +3,7 @@ package miniengine.Core;
 import javafx.application.Application;
 import miniengine.Graphics.Painter;
 import miniengine.Structure.GameObject;
-import miniengine.Graphics.Camera;
+import miniengine.Components.Camera;
 import miniengine.Audio.SoundListener;
 
 public class Game {
@@ -65,7 +65,7 @@ public class Game {
     }
 
     public void renderAll(Painter painter) {
-        if (currentWorld != null) currentWorld.renderWorld(painter);
+        if (currentWorld != null) currentWorld.renerScene(painter);
     }
 
     // ____ Geters ____

@@ -5,7 +5,7 @@ import miniengine.Graphics.Painter;
 import miniengine.Structure.GameObject;
 import miniengine.Math.Vector2;
 import miniengine.Physics.Physics;
-import miniengine.Physics.Collider;
+import miniengine.Components.Collider;
 
 import java.util.*;
 
@@ -22,6 +22,7 @@ public class World {
 
     protected List<GameObject> activeObjects = new ArrayList<>();
     private final List<GameObject> objectsToAdd = new ArrayList<>();
+
     private final int CELL_SIZE = 150;
 
     public World(Vector2 size){
@@ -45,6 +46,7 @@ public class World {
     public void onEnter() {}
     public void onExit() {}
 
+    // ____ Controle de Objetos ____
     public void addObject(GameObject obj) {
         objectsToAdd.add(obj);
     }
@@ -52,10 +54,13 @@ public class World {
     //__ Funções nativas da Engine ___
     public void processNewObjects() {
         if (!objectsToAdd.isEmpty()) {
+
+            activeObjects.addAll(objectsToAdd);
+
             for (GameObject obj : objectsToAdd) {
                 obj.initialize();
-                activeObjects.add(obj);
             }
+
             objectsToAdd.clear();
         }
     }
@@ -75,13 +80,28 @@ public class World {
             activeObjects.get(i).runUpdate();
         }
         resolveCollisions();
+        activeObjects.sort((a,b) -> Integer.compare(a.layer, b.layer));
     }
 
-    public void renderWorld(Painter painter) {
-        for (int i = 0; i < activeObjects.size(); i++) {
-            activeObjects.get(i).runDraw(painter);
+    public void renerScene(Painter painter) {
+        for(int i = 0; i < activeObjects.size(); i++) {
+            GameObject obj = activeObjects.get(i);
+            if(!obj.isUI){
+                obj.runDraw(painter);
+            }
+        }
+        if(showBounds) drawWorldBounds(painter);
+    }
+
+    public void renderUI(Painter painter) {
+        for(int i = 0; i < activeObjects.size(); i++) {
+            GameObject obj = activeObjects.get(i);
+            if (obj.isUI) {
+                obj.runDraw(painter);
+            }
         }
     }
+
     private void drawWorldBounds(Painter p) {
         p.save();
         p.setColor(GameColor.BLUE);

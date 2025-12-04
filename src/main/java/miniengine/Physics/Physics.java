@@ -1,5 +1,6 @@
 package miniengine.Physics;
 
+import miniengine.Components.Collider;
 import miniengine.Math.Vector2;
 import miniengine.Structure.Transform;
 

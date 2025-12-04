@@ -7,15 +7,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameObject {
-
     public static int instances = 0;
     public String name;
+    public int layer = 0;
+    public boolean isUI = false;
+    public Transform position = new Transform();
+    public Transform rotation = new Transform();
+
     public boolean isActivated = true;
     public boolean isDestroyed = false;
 
     private final List<GameComponent> components = new ArrayList<>();
-    public Transform transform;
 
+    public Transform transform;
     public GameObject() {
         instances++;
         this.name = "GameObject_" + instances;

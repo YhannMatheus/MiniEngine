@@ -1,4 +1,4 @@
-package miniengine.Graphics;
+package miniengine.Components;
 
 import miniengine.Core.Game;
 import miniengine.Math.*;

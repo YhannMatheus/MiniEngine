@@ -1,7 +1,5 @@
-package miniengine.Physics;
+package miniengine.Components;
 
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import miniengine.Graphics.GameColor;
 import miniengine.Graphics.Painter;
 import miniengine.Structure.GameComponent;
