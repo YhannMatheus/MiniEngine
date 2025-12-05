@@ -40,7 +40,7 @@ public class AssetManager {
     }
 
     public static AudioClip getAudio(String fileName) {
-        String path = fileName.startsWith("/") ? fileName : "/sounds/" + fileName;
+        String path = fileName.startsWith("/") ? fileName : "/usergame/sounds/" + fileName;
 
         if (sounds.containsKey(path)) {
             return sounds.get(path);

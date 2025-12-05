@@ -1,101 +1,93 @@
 package miniengine.Core;
 
 import javafx.animation.AnimationTimer;
-import javafx.application.Application;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
-
+import miniengine.Core.Game;
 import miniengine.Input.Input;
-import miniengine.Components.Camera;
-import miniengine.Graphics.Painter;
-import miniengine.Structure.Transform;
+import miniengine.Math.Vector2;
 
-public class GameWindow extends Application {
+public class GameWindow {
 
-    private Game game;
-    private double width;
-    private double height;
+    private Canvas canvas;
+    private GraphicsContext gc;
+    private AnimationTimer loop;
+    private Vector2 resolution;
 
-    @Override
-    public void start(Stage stage) {
-        this.game = Game.getInstance();
-        this.width = game.getWidth();
-        this.height = game.getHeight();
+    public GameWindow(Vector2 resolution) {
+        this.resolution = resolution;
 
-        Canvas canvas = new Canvas(width, height);
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.setImageSmoothing(false);
+        // Inicializa o Canvas (Superfície de desenho do JavaFX)
+        this.canvas = new Canvas(resolution.x, resolution.y);
+        this.gc = canvas.getGraphicsContext2D();
 
-        Scene scene = createScene(canvas);
-        setupInputs(scene, canvas);
+        // Configura Input e Singleton
+        configureInput();
+        configureGameInstance();
 
-        stage.setTitle(game.getTitle());
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
-
-        startGameLoop(gc);
+        // Prepara o loop (mas não inicia ainda, espera o start())
+        createLoop();
     }
 
-    private Scene createScene(Canvas canvas) {
-        StackPane root = new StackPane(canvas);
-        root.setStyle("-fx-background-color: black;");
-        return new Scene(root, width, height);
+    // --- API PÚBLICA ---
+
+    /**
+     * Retorna o Canvas para ser inserido na interface do Editor.
+     */
+    public Canvas getCanvas() {
+        return this.canvas;
     }
 
-    private void setupInputs(Scene scene, Canvas canvas) {
-        scene.setOnKeyPressed(e -> Input._onKeyPressed(e.getCode()));
-        scene.setOnKeyReleased(e -> Input._onKeyReleased(e.getCode()));
-
-        scene.setOnMousePressed(e -> Input._onMousePressed(e.getButton()));
-        scene.setOnMouseReleased(e -> Input._onMouseReleased(e.getButton()));
-
-        scene.setOnMouseMoved(e -> Input._onMouseMoved(e.getX(), e.getY()));
-        scene.setOnMouseDragged(e -> Input._onMouseMoved(e.getX(), e.getY()));
-
-        canvas.setFocusTraversable(true);
+    /**
+     * Inicia o loop do jogo e foca no canvas para receber input.
+     */
+    public void start() {
+        if (loop != null) loop.start();
         canvas.requestFocus();
     }
 
-    private void startGameLoop(GraphicsContext gc) {
-        Painter painter = new Painter(gc);
+    /**
+     * Para o loop (útil para pausar o editor).
+     */
+    public void stop() {
+        if (loop != null) loop.stop();
+    }
 
-        new AnimationTimer() {
+    // --- CONFIGURAÇÕES INTERNAS ---
+
+    private void configureGameInstance() {
+        Game game = Game.getInstance();
+        game.setGraphicsContext(gc);
+        game.setScreenSize(resolution);
+    }
+
+    private void configureInput() {
+        // Permite que o Canvas receba foco do teclado
+        canvas.setFocusTraversable(true);
+
+        // --- TECLADO ---
+        canvas.setOnKeyPressed(e -> Input._onKeyPressed(e.getCode()));
+        canvas.setOnKeyReleased(e -> Input._onKeyReleased(e.getCode()));
+
+        // --- MOUSE ---
+        canvas.setOnMousePressed(e -> Input._onMousePressed(e.getButton()));
+        canvas.setOnMouseReleased(e -> Input._onMouseReleased(e.getButton()));
+
+        // Movimento (Mouse Move normal + Dragged quando botão está segurado)
+        canvas.setOnMouseMoved(e -> Input._onMouseMoved(e.getX(), e.getY()));
+        canvas.setOnMouseDragged(e -> Input._onMouseMoved(e.getX(), e.getY()));
+
+        // Hack de usabilidade: Clicar no jogo foca nele (para o teclado funcionar)
+        canvas.setOnMouseClicked(e -> canvas.requestFocus());
+    }
+
+    private void createLoop() {
+        loop = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                gc.setFill(Color.BLACK);
-                gc.fillRect(0, 0, width, height);
-
-                Time.update(now);
-
-                gc.save();
-
-                Camera cam = game.getMainCamera();
-                if (cam != null) {
-                    gc.translate(width / 2, height / 2);
-
-                    double totalZoom = game.getScale() * cam.zoom;
-                    gc.scale(totalZoom, totalZoom);
-
-                    Transform camT = cam.gameObject.transform;
-                    gc.translate(-camT.position.x, -camT.position.y);
-                } else {
-                    gc.scale(game.getScale(), game.getScale());
-                }
-
-                game.processNewObjects();
-                game.updateAll();
-                game.renderAll(painter);
-                game.processDeadObjects();
-
-                gc.restore();
-
-                Input._endFrame();
+                // Delega toda a lógica para o Singleton Game
+                Game.getInstance().runFrame();
             }
-        }.start();
+        };
     }
 }

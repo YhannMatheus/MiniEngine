@@ -1,84 +1,120 @@
 package miniengine.Core;
 
-import javafx.application.Application;
-import miniengine.Graphics.Painter;
-import miniengine.Structure.GameObject;
-import miniengine.Components.Camera;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import miniengine.Components.Audio.SoundListener;
+import miniengine.Objects.Camera;
+import miniengine.Graphics.Painter;
+import miniengine.Input.Input;
+import miniengine.Math.Vector2;
+
+import minieditor.Utils.EditorCamera;
+import minieditor.Utils.EditorGrid;
 
 public class Game {
 
     private static Game instance;
 
-    private final String title;
-    private final int width;
-    private final int height;
-    private final double scale;
-
+    // --- ESTADO GLOBAL ---
+    private Vector2 screenSize = new Vector2(0,0);
+    private GraphicsContext gc;
     private World currentWorld;
-    private Camera mainCamera;
-    private SoundListener soundListener;
+    private Painter painter;
 
-    public Game(String title, int width, int height, double scale) {
-        this.title = title;
-        this.width = width;
-        this.height = height;
-        this.scale = scale;
+    // --- SISTEMA DE ÁUDIO ---
+    private SoundListener listener;
+
+    // ___ REFERENCIAS AO EDITOR ____
+    public EditorCamera editorCamera;
+
+    private Game(){
+        this.editorCamera = new EditorCamera();
     }
 
-    public Game(String title, int width, int height) {
-        this(title, width, height, 1.0);
-    }
-
-    public void start() {
-        instance = this;
-        Application.launch(GameWindow.class);
-    }
-
-    public void loadWorld(World newWorld) {
-        if (currentWorld != null) {
-            currentWorld.onExit();
+    public static Game getInstance() {
+        if (instance == null) {
+            instance = new Game();
         }
-        currentWorld = newWorld;
+        return instance;
+    }
 
+    // --- CONFIGURAÇÃO ---
+
+    public void setGraphicsContext(GraphicsContext gc) {
+        this.gc = gc;
+        this.painter = new Painter(gc);
+    }
+
+    public void setScreenSize(Vector2 size) {
+        this.screenSize = size;
+    }
+
+    public Vector2 getScreenSize() {
+        return screenSize;
+    }
+
+    public double getWidth() {
+        return screenSize.x;
+    }
+
+    public double getHeight() {
+        return screenSize.y;
+    }
+
+    public double getScale() {
+        return 1.0;
+    }
+
+    // --- MÉTODOS DE ÁUDIO (O que estava faltando) ---
+
+    public void setListener(SoundListener listener) {
+        this.listener = listener;
+    }
+
+    public SoundListener getListener() {
+        return this.listener;
+    }
+
+    // --- LOOP DO JOGO ---
+
+    public void runFrame() {
+        if (gc == null || screenSize == null) return;
+
+        // Limpa a tela
+        gc.clearRect(0, 0, screenSize.x, screenSize.y);
+        gc.setFill(Color.web("#1e1e1e"));
+        gc.fillRect(0, 0, screenSize.x, screenSize.y);
+
+        EditorGrid.draw(gc, screenSize.x, screenSize.y, editorCamera);
+
+        // Atualiza e Renderiza o Mundo
         if (currentWorld != null) {
-            currentWorld.onEnter();
+            currentWorld.update();
+            if (painter != null) {
+                currentWorld.draw(painter);
+            }
+        }
+
+        //Finaliza Input
+        Input._endFrame();
+    }
+
+    // --- GERENCIAMENTO DE CENAS ---
+
+    public void setWorld(World world) {
+        this.currentWorld = world;
+        if (world != null) {
+            world.start();
         }
     }
 
-    public void addObject(GameObject obj) {
-        if (currentWorld != null) {
-            currentWorld.addObject(obj);
-        }
+    public World getWorld() {
+        return currentWorld;
     }
 
-    public void processNewObjects() {
-        if (currentWorld != null) currentWorld.processNewObjects();
+    public Camera getMainCamera() {
+        if (currentWorld != null) return currentWorld.camera;
+        return null;
     }
 
-    public void processDeadObjects() {
-        if (currentWorld != null) currentWorld.processDeadObjects();
-    }
-
-    public void updateAll() {
-        if (currentWorld != null) currentWorld.updateWorld();
-    }
-
-    public void renderAll(Painter painter) {
-        if (currentWorld != null) currentWorld.renerScene(painter);
-    }
-
-    // ____ Geters ____
-    public void setMainCamera(Camera camera) { this.mainCamera = camera; }
-    public void setListener(SoundListener soundListener) { this.soundListener = soundListener; }
-    public void setInitialWorld(World initialWorld) { this.currentWorld = initialWorld; }
-
-    // ____ Setters ____
-    public Camera getMainCamera() { return this.mainCamera; }
-    public static Game getInstance() { return instance; }
-    public String getTitle() { return title; }
-    public int getWidth() { return width; }
-    public int getHeight() { return height; }
-    public double getScale() { return scale; }
-    public SoundListener getListener() { return soundListener; }
 }

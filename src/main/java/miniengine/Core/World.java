@@ -1,5 +1,6 @@
 package miniengine.Core;
 
+import miniengine.Objects.Camera;
 import miniengine.Graphics.GameColor;
 import miniengine.Graphics.Painter;
 import miniengine.Structure.GameObject;
@@ -14,8 +15,13 @@ public class World {
     public String name;
     private int index;
     public Vector2 size;
+
+    // Bounds (Limites do Mundo)
     public Vector2 minPoints;
     public Vector2 maxPoints;
+
+    // Câmera do Mundo (Isso faltava para o Game não dar erro)
+    public Camera camera;
 
     private static int instances;
     public boolean showBounds = false;
@@ -28,13 +34,20 @@ public class World {
     public World(Vector2 size){
         instances++;
         index = instances;
-        this.name = "World_"+index;
+        this.name = "World_" + index;
         this.size = size;
         this.minPoints = new Vector2(0, 0);
         this.maxPoints = new Vector2(0, 0);
-        calculateBounds();
 
+        // Inicializa a câmera no centro (ou 0,0)
+        Vector2 defaultResolution = Game.getInstance().getScreenSize();
+        if (defaultResolution.x == 0) defaultResolution = new Vector2(1280, 720);
+        this.camera = new Camera(defaultResolution);
+        this.addObject(this.camera);
+
+        calculateBounds();
     }
+
     private void calculateBounds(){
         minPoints.y = -(size.y/2);
         maxPoints.y = +(size.y/2);
@@ -46,26 +59,63 @@ public class World {
     public void onEnter() {}
     public void onExit() {}
 
+    // ____ API Padrão da Engine (Correção dos Erros) ____
+
+    public void start() {
+        onEnter();
+    }
+
+    // Renomeado de updateWorld para update
+    public void update() {
+        processNewObjects();
+
+        for (int i = 0; i < activeObjects.size(); i++) {
+            activeObjects.get(i).runUpdate();
+        }
+
+        resolveCollisions();
+        processDeadObjects(); // Processa mortos depois da física
+
+        activeObjects.sort((a,b) -> Integer.compare(a.layer, b.layer));
+    }
+
+    // Renomeado de renerScene para draw
+    public void draw(Painter painter) {
+        for(int i = 0; i < activeObjects.size(); i++) {
+            GameObject obj = activeObjects.get(i);
+            if(!obj.isUI){
+                obj.runDraw(painter);
+            }
+        }
+
+        if(showBounds) drawWorldBounds(painter);
+
+        for(int i = 0; i < activeObjects.size(); i++) {
+            GameObject obj = activeObjects.get(i);
+            if (obj.isUI) {
+                obj.runDraw(painter);
+            }
+        }
+    }
+
     // ____ Controle de Objetos ____
     public void addObject(GameObject obj) {
         objectsToAdd.add(obj);
     }
 
-    //__ Funções nativas da Engine ___
-    public void processNewObjects() {
+    //__ Funções Internas ___
+
+    private void processNewObjects() {
         if (!objectsToAdd.isEmpty()) {
-
             activeObjects.addAll(objectsToAdd);
-
             for (GameObject obj : objectsToAdd) {
                 obj.initialize();
             }
-
             objectsToAdd.clear();
         }
     }
 
-    public void processDeadObjects() {
+    private void processDeadObjects() {
         activeObjects.removeIf(obj -> {
             if (obj.isDestroyed) {
                 obj.dispose();
@@ -75,40 +125,11 @@ public class World {
         });
     }
 
-    public void updateWorld() {
-        for (int i = 0; i < activeObjects.size(); i++) {
-            activeObjects.get(i).runUpdate();
-        }
-        resolveCollisions();
-        activeObjects.sort((a,b) -> Integer.compare(a.layer, b.layer));
-    }
-
-    public void renerScene(Painter painter) {
-        for(int i = 0; i < activeObjects.size(); i++) {
-            GameObject obj = activeObjects.get(i);
-            if(!obj.isUI){
-                obj.runDraw(painter);
-            }
-        }
-        if(showBounds) drawWorldBounds(painter);
-    }
-
-    public void renderUI(Painter painter) {
-        for(int i = 0; i < activeObjects.size(); i++) {
-            GameObject obj = activeObjects.get(i);
-            if (obj.isUI) {
-                obj.runDraw(painter);
-            }
-        }
-    }
-
     private void drawWorldBounds(Painter p) {
         p.save();
         p.setColor(GameColor.BLUE);
         p.setLineWidth(5);
-
         p.drawRect(minPoints.x, minPoints.y, size.x, size.y);
-
         p.setLineWidth(2);
         p.drawRect(-10, -10, 20, 20);
         p.restore();
@@ -124,12 +145,16 @@ public class World {
         return new Vector2(clampedX, clampedY);
     }
 
+    // --- FÍSICA E COLISÃO ---
+
     private void resolveCollisions() {
+        // Reseta estado de colisão
         for (GameObject obj : activeObjects) {
             Collider col = obj.getComponent(Collider.class);
             if (col != null) col.inColliding = false;
         }
 
+        // Grid Espacial (Otimização)
         Map<String, List<GameObject>> grid = new HashMap<>();
 
         for (GameObject obj : activeObjects) {
@@ -143,9 +168,9 @@ public class World {
             grid.computeIfAbsent(key, k -> new ArrayList<>()).add(obj);
         }
 
+        // Verifica colisão nas células vizinhas
         for (String key : grid.keySet()) {
             List<GameObject> objectsInCell = grid.get(key);
-
             String[] parts = key.split(",");
             int cx = Integer.parseInt(parts[0]);
             int cy = Integer.parseInt(parts[1]);
@@ -180,7 +205,10 @@ public class World {
                     objB.runOnCollision(objA);
 
                     if (!colA.isTrigger && !colB.isTrigger) {
+
                         objA.transform.translate(new Vector2(push.x, push.y));
+
+                        objA.runPhysicsResolved(push);
                     }
                 }
             }

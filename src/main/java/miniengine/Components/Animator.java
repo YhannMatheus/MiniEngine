@@ -4,10 +4,10 @@ import javafx.scene.image.Image;
 import miniengine.Core.*;
 import miniengine.Graphics.AnimationClip;
 import miniengine.Graphics.Painter;
+import miniengine.Objects.Camera;
 import miniengine.Structure.*;
 import miniengine.Math.*;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 

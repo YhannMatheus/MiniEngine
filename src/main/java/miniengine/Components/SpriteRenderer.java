@@ -3,12 +3,11 @@ package miniengine.Components;
 import miniengine.Core.AssetManager;
 import miniengine.Core.Game;
 import miniengine.Graphics.Painter;
+import miniengine.Objects.Camera;
 import miniengine.Structure.GameComponent;
 import javafx.scene.image.Image;
 import miniengine.Math.Vector2;
 import miniengine.Structure.Transform;
-
-import java.io.InputStream;
 
 public class SpriteRenderer extends GameComponent {
     // Imagem

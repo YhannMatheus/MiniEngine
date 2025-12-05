@@ -1,0 +1,238 @@
+/*
+ MiniEditor - estilos da interface
+ Comentários concisos explicam o objetivo de cada bloco e o efeito
+ das propriedades principais. Mantive os seletores originais e os
+ valores existentes — apenas limpei e organizei os comentários.
+*/
+
+/*
+  Janela customizada (container principal)
+  - Define fundo, borda e raio para o contorno da janela
+  - `-fx-effect` aplica sombra para destacar a janela sobre o fundo
+*/
+.custom-window-border {
+    -fx-background-color: #1e1e1e;
+    -fx-border-color: #333333;
+    -fx-border-width: 1px;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 15, 0, 0, 5);
+}
+
+/*
+  Barra de título
+  - Área superior da janela; geralmente contém o título e controles
+  - Padding para espaçamento interno
+*/
+.window-title-bar {
+    -fx-background-color: transparent;
+    -fx-padding: 8px;
+}
+
+/*
+  Rótulo do título
+  - Cor e peso do texto para manter legibilidade e hierarquia visual
+*/
+.window-title-label {
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+/*
+  Botões de ação da janela (por exemplo: minimizar, maximizar)
+  - Layout compacto, cursor de interação e estados visuais
+*/
+.window-action-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #888888;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-min-width: 30px;
+    -fx-min-height: 20px;
+}
+
+/*
+  Hover para botões de ação da janela
+  - Muda o fundo para um tom mais escuro e o texto para branco
+*/
+.window-action-button:hover {
+    -fx-text-fill: white;
+    -fx-background-color: #3e3e42;
+    -fx-background-radius: 5px;
+}
+
+/*
+  Hover especializado para botão de fechar (opcional)
+  - Exibe fundo vermelho para indicar ação destrutiva
+*/
+.close-button-hover:hover {
+    -fx-background-color: #c42b1c;
+    -fx-text-fill: white;
+}
+
+/*
+  Listas (ListView / ListCell)
+  - Define fundo transparente para a área da lista e padding geral
+  - Cada célula tem padding e cor de texto; seleção ganha destaque
+*/
+.list-view {
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+    -fx-padding: 5px;
+}
+
+/*
+  Células da lista
+  - Cor de texto clara para legibilidade em fundo escuro
+  - Padding para espaçamento interno
+*/
+.list-cell {
+    -fx-text-fill: #cccccc;
+    -fx-background-color: transparent;
+    -fx-padding: 5px 0 5px 10px;
+}
+
+/*
+  Estado selecionado da célula da lista
+  - Fundo escuro e texto branco para indicar seleção ativa
+*/
+.list-cell:filled:selected {
+    -fx-background-color: #3d3d3d;
+    -fx-text-fill: white;
+    -fx-background-radius: 4px;
+}
+
+/*
+  Controles estilo Windows (botões de janela)
+  - Botões padrão: transparente por padrão, mudam de cor em hover
+  - Uso de fontes com símbolos garante que ícones (se houver) sejam exibidos
+*/
+.window-control-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #aaaaaa;
+    -fx-font-size: 13px;
+    -fx-font-family: "Segoe UI Symbol", "Segoe UI", sans-serif;
+    -fx-min-width: 45px;
+    -fx-min-height: 30px;
+    -fx-cursor: hand;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+}
+
+/*
+  Hover para botões de controle da janela
+  - Muda o fundo para um tom mais escuro e o texto para branco
+*/
+.window-control-button:hover {
+    -fx-background-color: #3e3e42;
+    -fx-text-fill: white;
+}
+
+/*
+  Botão fechar principal
+  - Igual aos controles padrão, com hover vermelho para indicar fechar
+*/
+.window-close-button-main {
+    -fx-background-color: transparent;
+    -fx-text-fill: #aaaaaa;
+    -fx-font-size: 13px;
+    -fx-font-family: "Segoe UI Symbol", sans-serif;
+    -fx-min-width: 45px;
+    -fx-min-height: 30px;
+    -fx-cursor: hand;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+}
+/*
+  Hover para botão fechar principal
+  - Fundo vermelho e texto branco ao passar o mouse
+*/
+.window-close-button-main:hover {
+    -fx-background-color: #e81123;
+    -fx-text-fill: white;
+}
+
+/*
+  Pressed para botão fechar principal
+  - Fundo vermelho mais claro ao clicar
+*/
+.window-close-button-main:pressed {
+    -fx-background-color: #f1707a;
+}
+
+
+/*
+  Inspetor de Propriedades (Property Inspector)
+  - Container principal do inspetor, com padding para espaçamento
+*/
+/*
+  Títulos de Seção (Headers)
+  - Usado para separar grupos de propriedades (ex: Transform, Audio)
+  - Borda inferior cria uma linha divisória sutil
+*/
+.inspector-section-title {
+    -fx-text-fill: #e0e0e0;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+    -fx-padding: 10px 0 5px 0;
+    -fx-border-color: #444444;
+    -fx-border-width: 0 0 1px 0;
+}
+
+/*
+  Rótulos de Propriedade (Labels)
+  - Texto descritivo à esquerda dos campos (ex: Position, Scale)
+  - Largura mínima definida para manter alinhamento vertical das colunas
+*/
+.inspector-prop-label {
+    -fx-text-fill: #aaaaaa;
+    -fx-font-size: 11px;
+    -fx-min-width: 70px;
+    -fx-alignment: center-left;
+}
+
+/*
+  Campos de Texto (Input String)
+  - Inputs gerais para texto
+  - Fundo levemente diferenciado para indicar área editável
+*/
+.inspector-text-field {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #e0e0e0;
+    -fx-border-color: #444444;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+    -fx-padding: 3px;
+    -fx-font-size: 11px;
+}
+
+/*
+  Campos Numéricos (Input Number)
+  - Inputs menores específicos para valores numéricos (Vector2, float)
+  - Alinhamento à direita é padrão para números
+*/
+.inspector-number-field {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #a0a0a0;
+    -fx-border-color: #444444;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+    -fx-pref-width: 45px;
+    -fx-font-size: 11px;
+    -fx-alignment: center-right;
+}
+
+/*
+  Estado de Foco (Edição)
+  - Aplica borda azul (estilo VS Code) quando o usuário clica para digitar
+  - Aumenta contraste do texto e fundo para facilitar leitura
+*/
+.inspector-text-field:focused,
+.inspector-number-field:focused {
+    -fx-border-color: #007acc;
+    -fx-background-color: #333333;
+    -fx-text-fill: white;
+}

@@ -19,7 +19,7 @@ public class SoundEmitter extends GameComponent {
     private boolean isPlaying = false;
 
     public SoundEmitter(String soundFile) {
-        String path = soundFile.startsWith("/") ? soundFile : "/sounds/" + soundFile;
+        String path = soundFile.startsWith("/") ? soundFile : "/usergame/sounds/" + soundFile;
     }
 
     @Override
